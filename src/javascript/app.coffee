@@ -11,22 +11,27 @@ renderer = null
 stage = null
 
 update = ->
-  far.position.x -= 0.128
-  mid.position.x -= 0.64
+  far.tilePosition.x -= 0.128
+  mid.tilePosition.x -= 0.64
   renderer.render(stage)
   requestAnimationFrame(update)
 
   
 init = ->
-  canvas = document.getElementById("game-canvas")
-  console.log canvas
+  # canvas = document.getElementById("game-canvas")
+  # console.log canvas
 
-  stage = new PIXI.Stage(0x66FF99)
+  stage = new PIXI.Stage(0x66FF99, true)
   renderer = PIXI.autoDetectRenderer(
     512,
-    384,
-    document.getElementById("game-canvas")
+    384
   )
+  # renderer.view.style.position = "absolute"
+  # renderer.view.style.top = "0px"
+  # renderer.view.style.left = "0px"
+  jquery('#game-holder').append(renderer.view)
+  # document.body.appendChild(renderer.view)
+  
 
   farTexture = PIXI.Texture.fromImage("images/bg-far.png")
   far = new PIXI.TilingSprite(farTexture,512,256)
