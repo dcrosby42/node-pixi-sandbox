@@ -1,6 +1,7 @@
 PIXI = require 'pixi.js'
 
 class Mid extends PIXI.TilingSprite
+  @DELTA_X = 0.64
   constructor: ->
     texture = PIXI.Texture.fromImage("images/bg-mid.png")
     super texture, 512, 256
@@ -8,8 +9,11 @@ class Mid extends PIXI.TilingSprite
     @position.y = 128
     @tilePosition.x = 0
     @tilePosition.y = 0
+    @viewportX = 0
 
-  update: ->
-    @tilePosition.x -= 0.64
+  setViewportX: (x) ->
+    distanceTravelled = x - @viewportX
+    @viewportX = x
+    @tilePosition.x -= (distanceTravelled * Mid.DELTA_X)
 
 module.exports = Mid

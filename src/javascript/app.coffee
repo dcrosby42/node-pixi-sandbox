@@ -11,7 +11,8 @@ renderer = null
 stage = null
 
 update = ->
-  scroller.update()
+  scroller.moveViewportXBy(5)
+
   renderer.render(stage)
   requestAnimationFrame(update)
 
