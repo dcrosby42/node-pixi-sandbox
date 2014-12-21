@@ -1,12 +1,12 @@
 PIXI = require 'pixi.js'
 
-class Far extends PIXI.TilingSprite
+class Mid extends PIXI.TilingSprite
   constructor: ->
-    texture = PIXI.Texture.fromImage("images/bg-far.png")
+    texture = PIXI.Texture.fromImage("images/bg-mid.png")
     super texture, 512, 256
     @position.x = 0
-    @position.y = 0
+    @position.y = 128
     @tilePosition.x = 0
     @tilePosition.y = 0
 
-module.exports = Far
+module.exports = Mid

@@ -5,6 +5,7 @@
 jquery = require 'jquery'
 PIXI = require 'pixi.js'
 Far = require './far'
+Mid = require './mid'
 
 far = null
 mid = null
@@ -31,12 +32,13 @@ init = ->
   far = new Far()
   stage.addChild(far)
 
-  midTexture = PIXI.Texture.fromImage("/images/bg-mid.png")
-  mid = new PIXI.TilingSprite(midTexture,512,256)
-  mid.position.x = 0
-  mid.position.y = 128
-  mid.tilePosition.x = 0
-  mid.tilePosition.y = 0
+  # midTexture = PIXI.Texture.fromImage("/images/bg-mid.png")
+  # mid = new PIXI.TilingSprite(midTexture,512,256)
+  # mid.position.x = 0
+  # mid.position.y = 128
+  # mid.tilePosition.x = 0
+  # mid.tilePosition.y = 0
+  mid = new Mid()
   stage.addChild(mid)
 
   requestAnimationFrame update
