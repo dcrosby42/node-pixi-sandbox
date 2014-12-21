@@ -4,4 +4,5 @@ jquery = require 'jquery'
 Main = require './scroller/main'
 
 jquery ->
-  new Main()
+  main = new Main(domElement: jquery('#game-holder')[0])
+  window.main = main
