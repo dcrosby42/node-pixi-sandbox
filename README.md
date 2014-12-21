@@ -24,7 +24,9 @@ Dan Tello's blog post about getting Gulp + all-the-things up and running:
 ...and add this PixiJS tutorial: 
 
 * "Building a Parallax Scroller in Pixi"
-* http://www.yeahbutisitflash.com/?p=5226
+* Part 1: http://www.yeahbutisitflash.com/?p=5226
+* Part 2: http://www.yeahbutisitflash.com/?p=5666
+* Part 3: http://www.yeahbutisitflash.com/?p=6496
 
 (Note that the tut is circa Pixi 1.3 and I'm using 2.2 but whatevs)
 
