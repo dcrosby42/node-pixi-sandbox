@@ -4,6 +4,7 @@
 #
 jquery = require 'jquery'
 PIXI = require 'pixi.js'
+Far = require './far'
 
 far = null
 mid = null
@@ -18,27 +19,16 @@ update = ->
 
   
 init = ->
-  # canvas = document.getElementById("game-canvas")
-  # console.log canvas
 
-  stage = new PIXI.Stage(0x66FF99, true)
+  stage = new PIXI.Stage(0x66FF99)
   renderer = PIXI.autoDetectRenderer(
     512,
     384
   )
-  # renderer.view.style.position = "absolute"
-  # renderer.view.style.top = "0px"
-  # renderer.view.style.left = "0px"
   jquery('#game-holder').append(renderer.view)
-  # document.body.appendChild(renderer.view)
   
 
-  farTexture = PIXI.Texture.fromImage("images/bg-far.png")
-  far = new PIXI.TilingSprite(farTexture,512,256)
-  far.position.x = 0
-  far.position.y = 0
-  far.tilePosition.x = 0
-  far.tilePosition.y = 0
+  far = new Far()
   stage.addChild(far)
 
   midTexture = PIXI.Texture.fromImage("/images/bg-mid.png")
