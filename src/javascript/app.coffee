@@ -4,17 +4,14 @@
 #
 jquery = require 'jquery'
 PIXI = require 'pixi.js'
-Far = require './far'
-Mid = require './mid'
+Scroller = require './scroller/scroller'
 
-far = null
-mid = null
+scroller = null
 renderer = null
 stage = null
 
 update = ->
-  far.tilePosition.x -= 0.128
-  mid.tilePosition.x -= 0.64
+  scroller.update()
   renderer.render(stage)
   requestAnimationFrame(update)
 
@@ -28,22 +25,9 @@ init = ->
   )
   jquery('#game-holder').append(renderer.view)
   
-
-  far = new Far()
-  stage.addChild(far)
-
-  # midTexture = PIXI.Texture.fromImage("/images/bg-mid.png")
-  # mid = new PIXI.TilingSprite(midTexture,512,256)
-  # mid.position.x = 0
-  # mid.position.y = 128
-  # mid.tilePosition.x = 0
-  # mid.tilePosition.y = 0
-  mid = new Mid()
-  stage.addChild(mid)
+  scroller = new Scroller(stage)
 
   requestAnimationFrame update
 
-window.initGame = init
-
-# jquery ->
-#   init()
+jquery ->
+  init()

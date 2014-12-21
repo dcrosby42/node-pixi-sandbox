@@ -9,4 +9,7 @@ class Mid extends PIXI.TilingSprite
     @tilePosition.x = 0
     @tilePosition.y = 0
 
+  update: ->
+    @tilePosition.x -= 0.64
+
 module.exports = Mid
