@@ -34,49 +34,48 @@ class Main
   spriteSheetLoaded: ->
     @scroller = new Scroller(@stage)
     requestAnimationFrame => @update()
+    # @pool = new WallSpritesPool()
+    # @wallSlices = []
 
-    @pool = new WallSpritesPool()
-    @wallSlices = []
-
-  generateTestWallSpan: ->
-    lookupTable = [
-      @pool.borrowFrontEdge
-      @pool.borrowWindow
-      @pool.borrowDecoration
-      @pool.borrowStep
-      @pool.borrowWindow
-      @pool.borrowBackEdge
-    ]
-    yPos = [
-      128
-      128
-      128
-      192
-      192
-      192
-    ]
-    for borrowFunc,i in lookupTable
-      sprite = borrowFunc.call(@pool)
-      sprite.position.x = 64 + (i*64)
-      sprite.position.y = yPos[i]
-      @wallSlices.push sprite
-      @stage.addChild sprite
-
-  clearTestWallSpan: ->
-    lookupTable = [
-      @pool.returnFrontEdge
-      @pool.returnWindow
-      @pool.returnDecoration
-      @pool.returnStep
-      @pool.returnWindow
-      @pool.returnBackEdge
-    ]
-    for returnFunc,i in lookupTable
-      sprite = @wallSlices[i]
-      returnFunc.call(@pool,sprite)
-      @stage.removeChild sprite
-
-    @wallSlices = []
+  # generateTestWallSpan: ->
+  #   lookupTable = [
+  #     @pool.borrowFrontEdge
+  #     @pool.borrowWindow
+  #     @pool.borrowDecoration
+  #     @pool.borrowStep
+  #     @pool.borrowWindow
+  #     @pool.borrowBackEdge
+  #   ]
+  #   yPos = [
+  #     128
+  #     128
+  #     128
+  #     192
+  #     192
+  #     192
+  #   ]
+  #   for borrowFunc,i in lookupTable
+  #     sprite = borrowFunc.call(@pool)
+  #     sprite.position.x = 64 + (i*64)
+  #     sprite.position.y = yPos[i]
+  #     @wallSlices.push sprite
+  #     @stage.addChild sprite
+  #
+  # clearTestWallSpan: ->
+  #   lookupTable = [
+  #     @pool.returnFrontEdge
+  #     @pool.returnWindow
+  #     @pool.returnDecoration
+  #     @pool.returnStep
+  #     @pool.returnWindow
+  #     @pool.returnBackEdge
+  #   ]
+  #   for returnFunc,i in lookupTable
+  #     sprite = @wallSlices[i]
+  #     returnFunc.call(@pool,sprite)
+  #     @stage.removeChild sprite
+  #
+  #   @wallSlices = []
 
   # generateTestWallSpan: ->
   #   lookupTable = [
