@@ -111,6 +111,4 @@ class Main
   #
   #   @wallSlices = []
 
-        
-
 module.exports = Main

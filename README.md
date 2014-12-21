@@ -27,6 +27,7 @@ Dan Tello's blog post about getting Gulp + all-the-things up and running:
 * Part 1: http://www.yeahbutisitflash.com/?p=5226
 * Part 2: http://www.yeahbutisitflash.com/?p=5666
 * Part 3: http://www.yeahbutisitflash.com/?p=6496
+* Part 4: http://www.yeahbutisitflash.com/?p=7046
 
 (Note that the tut is circa Pixi 1.3 and I'm using 2.2 but whatevs)
 
