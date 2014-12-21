@@ -38,42 +38,40 @@ class Main
     @pool = new WallSpritesPool()
     @wallSlices = []
 
-  borrowWallSprites: (num) ->
-    sprites = [
-      @pool.borrowDecoration()
-      @pool.borrowWindow()
-      @pool.borrowBackEdge()
-      @pool.borrowFrontEdge()
-      @pool.borrowDecoration()
-      @pool.borrowWindow()
-      @pool.borrowBackEdge()
+  generateTestWallSpan: ->
+    lookupTable = [
+      @pool.borrowFrontEdge
+      @pool.borrowWindow
+      @pool.borrowDecoration
+      @pool.borrowWindow
+      @pool.borrowDecoration
+      @pool.borrowWindow
+      @pool.borrowBackEdge
     ]
-    for sprite,i in sprites
-      sprite.position.x = -32 + (i * 64)
+    for borrowFunc,i in lookupTable
+      sprite = borrowFunc.call(@pool)
+      sprite.position.x = 32 + (i*64)
       sprite.position.y = 128
-      @wallSlices.push(sprite)
-      @stage.addChild(sprite)
+      @wallSlices.push sprite
+      @stage.addChild sprite
 
-  returnWallSprites: ->
-    for i in [0...@wallSlices.length]
+  clearTestWallSpan: ->
+    lookupTable = [
+      @pool.returnFrontEdge
+      @pool.returnWindow
+      @pool.returnDecoration
+      @pool.returnWindow
+      @pool.returnDecoration
+      @pool.returnWindow
+      @pool.returnBackEdge
+    ]
+    for returnFunc,i in lookupTable
       sprite = @wallSlices[i]
-      @stage.removeChild(sprite)
-      if i % 2 == 0
-        @pool.returnBackEdge(sprite)
-      else
-        @pool.returnDecoration(sprite)
-        
+      returnFunc.call(@pool,sprite)
+      @stage.removeChild sprite
+
     @wallSlices = []
 
-    # slice1 = PIXI.Sprite.fromFrame("edge_01")
-    # slice1.position.x = 32
-    # slice1.position.y = 64
-    # @stage.addChild(slice1)
-    #
-    # slice2 = PIXI.Sprite.fromFrame("decoration_03")
-    # slice2.position.x = 128
-    # slice2.position.y = 64
-    # @stage.addChild(slice2)
-
+        
 
 module.exports = Main
