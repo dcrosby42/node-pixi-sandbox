@@ -15,6 +15,7 @@ class WallSpritesPool
     @decorations = @createDecorations()
     @frontEdges = @createFrontEdges()
     @backEdges = @createBackEdges()
+    @steps = @createSteps()
 
   createWindows: ->
     pool = []
@@ -44,6 +45,15 @@ class WallSpritesPool
     @shuffle pool
     pool
 
+  createSteps: ->
+    pool = []
+    @addToPool pool, 2, "step_01", (name) ->
+      s = mkSprite(name)
+      s.anchor.y = 0.25
+      s
+    pool
+
+
   borrowWindow: -> @windows.shift()
   returnWindow: (sprite) -> @windows.push sprite
 
@@ -55,6 +65,9 @@ class WallSpritesPool
 
   borrowBackEdge: -> @backEdges.shift()
   returnBackEdge: (sprite) -> @backEdges.push sprite
+
+  borrowStep: -> @steps.shift()
+  returnStep: (sprite) -> @steps.push sprite
 
   addToPool: (pool, count, name, f) ->
     pool.push f(name) for _ in [1..count]

@@ -43,15 +43,22 @@ class Main
       @pool.borrowFrontEdge
       @pool.borrowWindow
       @pool.borrowDecoration
-      @pool.borrowWindow
-      @pool.borrowDecoration
+      @pool.borrowStep
       @pool.borrowWindow
       @pool.borrowBackEdge
     ]
+    yPos = [
+      128
+      128
+      128
+      192
+      192
+      192
+    ]
     for borrowFunc,i in lookupTable
       sprite = borrowFunc.call(@pool)
-      sprite.position.x = 32 + (i*64)
-      sprite.position.y = 128
+      sprite.position.x = 64 + (i*64)
+      sprite.position.y = yPos[i]
       @wallSlices.push sprite
       @stage.addChild sprite
 
@@ -60,8 +67,7 @@ class Main
       @pool.returnFrontEdge
       @pool.returnWindow
       @pool.returnDecoration
-      @pool.returnWindow
-      @pool.returnDecoration
+      @pool.returnStep
       @pool.returnWindow
       @pool.returnBackEdge
     ]
@@ -71,6 +77,40 @@ class Main
       @stage.removeChild sprite
 
     @wallSlices = []
+
+  # generateTestWallSpan: ->
+  #   lookupTable = [
+  #     @pool.borrowFrontEdge
+  #     @pool.borrowWindow
+  #     @pool.borrowDecoration
+  #     @pool.borrowWindow
+  #     @pool.borrowDecoration
+  #     @pool.borrowWindow
+  #     @pool.borrowBackEdge
+  #   ]
+  #   for borrowFunc,i in lookupTable
+  #     sprite = borrowFunc.call(@pool)
+  #     sprite.position.x = 32 + (i*64)
+  #     sprite.position.y = 128
+  #     @wallSlices.push sprite
+  #     @stage.addChild sprite
+  #
+  # clearTestWallSpan: ->
+  #   lookupTable = [
+  #     @pool.returnFrontEdge
+  #     @pool.returnWindow
+  #     @pool.returnDecoration
+  #     @pool.returnWindow
+  #     @pool.returnDecoration
+  #     @pool.returnWindow
+  #     @pool.returnBackEdge
+  #   ]
+  #   for returnFunc,i in lookupTable
+  #     sprite = @wallSlices[i]
+  #     returnFunc.call(@pool,sprite)
+  #     @stage.removeChild sprite
+  #
+  #   @wallSlices = []
 
         
 
