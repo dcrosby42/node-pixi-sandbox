@@ -11,21 +11,17 @@ jquery ->
     width: el.offsetWidth
     height: el.offsetHeight
 
-  window.main = main
-
-  savedWidth = null
-  savedHeight = null
-  goingBig = ->
-    [savedWidth, savedHeight] = main.getRendererSize()
-    main.setRendererSize window.screen.width, window.screen.height
-
-  goingSmall = ->
-    if savedWidth? and savedHeight?
-      main.setRendererSize savedWidth, savedHeight
+  window.main = main # just for messing around
 
   goBig = ->
     if BigScreen.enabled
-      BigScreen.request main.renderer.view, goingBig, goingSmall
+      savedSize = main.getRendererSize()
+      fullSize = {width: width, height: height} = window.screen
+      goingBig = -> main.setRendererSize fullSize
+      goingSmall = -> main.setRendererSize savedSize
+      onError = (el,reason) ->
+        console.log "Fullscreen failed because #{reason} on element:", el
+      BigScreen.request main.renderer.view, goingBig, goingSmall, onError
 
   $('#fullscreen').on "click", ->
     goBig()

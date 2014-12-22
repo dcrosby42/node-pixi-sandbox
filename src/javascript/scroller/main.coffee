@@ -42,9 +42,9 @@ class Main
   #
 
   getRendererSize: ->
-    [ @width, @height ]
+    { width: @width, height: @height }
 
-  setRendererSize: (@width,@height)->
+  setRendererSize: ({@width,@height})->
     @renderer.view.style.width = "#{@width}px"
     @renderer.view.style.height = "#{@height}px"
 
