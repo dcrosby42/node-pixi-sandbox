@@ -2,7 +2,7 @@ jquery    = require 'jquery'
 window.$  = jquery # for console debugging and messing around
 
 Main      = require './scroller/main'
-# BigScreen = require './vendor/bigscreen_wrapper'
+BigScreen = require './vendor/bigscreen_wrapper'
 
 jquery ->
   el = jquery('#game-holder')[0]
