@@ -18,6 +18,7 @@ jquery ->
       savedSize = main.getRendererSize()
       fullSize = {width: width, height: height} = window.screen
       goingBig = -> main.setRendererSize fullSize
+      console.log "setting back to", savedSize
       goingSmall = -> main.setRendererSize savedSize
       onError = (el,reason) ->
         console.log "Fullscreen failed because #{reason} on element:", el

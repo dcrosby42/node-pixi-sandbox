@@ -12,7 +12,6 @@ class Walls extends PIXI.DisplayObjectContainer
     @pool = new WallSpritesPool()
     @createLookupTables()
     @slices = []
-    @createTestMap()
 
     @viewportX = 0
     @viewportSliceX = 0
@@ -67,18 +66,18 @@ class Walls extends PIXI.DisplayObjectContainer
     for i in [@viewportSliceX...@viewportSliceX+Walls.VIEWPORT_NUM_SLICES]
       # console.log "i=#{i}, sliceIndex=#{sliceIndex}"
       slice = @slices[i]
-      if slice.sprite == null && slice.type != SliceType.GAP
+      if slice and slice.sprite == null && slice.type != SliceType.GAP
         # populate the sprite and move the sprite
         s = @borrowWallSprite(slice.type)
-        if !s?
-          console.log "FAILED TO BORROW WALL SPRITE @viewportSliceX=#{@viewportSliceX}"
-        s.position.x = firstX + (sliceIndex*WallSlice.WIDTH)
-        s.position.y = slice.y
-        slice.sprite = s
+        if s?
+          s.position.x = firstX + (sliceIndex*WallSlice.WIDTH)
+          s.position.y = slice.y
+          slice.sprite = s
+          # console.log "FAILED TO BORROW WALL SPRITE @viewportSliceX=#{@viewportSliceX}"
 
-        @addChild(slice.sprite)
+          @addChild(slice.sprite)
 
-      else if slice.sprite != null
+      else if slice and slice.sprite != null
         # just update sprite x pos
         slice.sprite.position.x = firstX + (sliceIndex*WallSlice.WIDTH)
       sliceIndex += 1
@@ -90,40 +89,10 @@ class Walls extends PIXI.DisplayObjectContainer
 
     for i in [prevViewportSliceX...prevViewportSliceX+numOldSlices]
       slice = @slices[i]
-      if slice.sprite?
+      if slice and slice.sprite?
         @returnWallSprite(slice.type, slice.sprite)
         @removeChild(slice.sprite)
         slice.sprite = null
-
-
-  createTestWallSpan: ->
-    @addSlice SliceType.FRONT, 192
-    @addSlice SliceType.WINDOW, 192
-    @addSlice SliceType.DECORATION, 192
-    @addSlice SliceType.WINDOW, 192
-    @addSlice SliceType.DECORATION, 192
-    @addSlice SliceType.WINDOW, 192
-    @addSlice SliceType.DECORATION, 192
-    @addSlice SliceType.WINDOW, 192
-    @addSlice SliceType.BACK, 192
-
-  createTestSteppedWallSpan: ->
-    @addSlice SliceType.FRONT, 192
-    @addSlice SliceType.WINDOW, 192
-    @addSlice SliceType.DECORATION, 192
-    @addSlice SliceType.STEP, 256
-    @addSlice SliceType.WINDOW, 256
-    @addSlice SliceType.BACK, 256
-
-  createTestGap: ->
-    @addSlice SliceType.GAP
-
-  createTestMap: ->
-    for i in [1..10]
-      @createTestWallSpan()
-      @createTestGap()
-      @createTestSteppedWallSpan()
-      @createTestGap()
 
 module.exports = Walls
 

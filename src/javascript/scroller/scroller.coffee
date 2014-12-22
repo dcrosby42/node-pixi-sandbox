@@ -1,12 +1,14 @@
 Far = require './far'
 Mid = require './mid'
 Walls = require './walls'
+MapBuilder = require './map_builder'
 
 class Scroller
   constructor: (stage) ->
     @far = new Far()
     @mid = new Mid()
     @front = new Walls()
+    @mapBuilder = new MapBuilder(@front)
     @viewportX = 0
 
     stage.addChild @far

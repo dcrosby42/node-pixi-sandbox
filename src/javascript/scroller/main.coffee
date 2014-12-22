@@ -15,6 +15,7 @@ class Main
     @height = Main.HEIGHT
     @renderer = PIXI.autoDetectRenderer(@width,@height)
     @domElement.appendChild @renderer.view
+    @setRendererSize width: @width, height: @height # seems redundant but the renderer has its own idea about how many pixels it renders, but we can "stretch" the canvas in the DOM to be different
     @loadSpriteSheet()
 
   update: ->
