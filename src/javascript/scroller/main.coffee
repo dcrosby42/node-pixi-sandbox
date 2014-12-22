@@ -1,5 +1,4 @@
 PIXI = require 'pixi.js'
-jquery = require 'jquery'
 
 Scroller = require './scroller'
 WallSpritesPool = require './wall_sprites_pool'
@@ -12,7 +11,9 @@ class Main
 
   constructor: ({@domElement})->
     @stage = new PIXI.Stage(Main.STAGE_BG)
-    @renderer = PIXI.autoDetectRenderer(Main.WIDTH, Main.HEIGHT)
+    @width = Main.WIDTH
+    @height = Main.HEIGHT
+    @renderer = PIXI.autoDetectRenderer(@width,@height)
     @domElement.appendChild @renderer.view
     @loadSpriteSheet()
 
@@ -34,81 +35,20 @@ class Main
   spriteSheetLoaded: ->
     @scroller = new Scroller(@stage)
     requestAnimationFrame => @update()
-    # @pool = new WallSpritesPool()
-    # @wallSlices = []
 
-  # generateTestWallSpan: ->
-  #   lookupTable = [
-  #     @pool.borrowFrontEdge
-  #     @pool.borrowWindow
-  #     @pool.borrowDecoration
-  #     @pool.borrowStep
-  #     @pool.borrowWindow
-  #     @pool.borrowBackEdge
-  #   ]
-  #   yPos = [
-  #     128
-  #     128
-  #     128
-  #     192
-  #     192
-  #     192
-  #   ]
-  #   for borrowFunc,i in lookupTable
-  #     sprite = borrowFunc.call(@pool)
-  #     sprite.position.x = 64 + (i*64)
-  #     sprite.position.y = yPos[i]
-  #     @wallSlices.push sprite
-  #     @stage.addChild sprite
-  #
-  # clearTestWallSpan: ->
-  #   lookupTable = [
-  #     @pool.returnFrontEdge
-  #     @pool.returnWindow
-  #     @pool.returnDecoration
-  #     @pool.returnStep
-  #     @pool.returnWindow
-  #     @pool.returnBackEdge
-  #   ]
-  #   for returnFunc,i in lookupTable
-  #     sprite = @wallSlices[i]
-  #     returnFunc.call(@pool,sprite)
-  #     @stage.removeChild sprite
-  #
-  #   @wallSlices = []
 
-  # generateTestWallSpan: ->
-  #   lookupTable = [
-  #     @pool.borrowFrontEdge
-  #     @pool.borrowWindow
-  #     @pool.borrowDecoration
-  #     @pool.borrowWindow
-  #     @pool.borrowDecoration
-  #     @pool.borrowWindow
-  #     @pool.borrowBackEdge
-  #   ]
-  #   for borrowFunc,i in lookupTable
-  #     sprite = borrowFunc.call(@pool)
-  #     sprite.position.x = 32 + (i*64)
-  #     sprite.position.y = 128
-  #     @wallSlices.push sprite
-  #     @stage.addChild sprite
   #
-  # clearTestWallSpan: ->
-  #   lookupTable = [
-  #     @pool.returnFrontEdge
-  #     @pool.returnWindow
-  #     @pool.returnDecoration
-  #     @pool.returnWindow
-  #     @pool.returnDecoration
-  #     @pool.returnWindow
-  #     @pool.returnBackEdge
-  #   ]
-  #   for returnFunc,i in lookupTable
-  #     sprite = @wallSlices[i]
-  #     returnFunc.call(@pool,sprite)
-  #     @stage.removeChild sprite
+  # So outsiders can resize the game:
   #
-  #   @wallSlices = []
+
+  getRendererSize: ->
+    [ @width, @height ]
+
+  setRendererSize: (@width,@height)->
+    @renderer.view.style.width = "#{@width}px"
+    @renderer.view.style.height = "#{@height}px"
+
+  getRendererView: ->
+    @renderer.view
 
 module.exports = Main
