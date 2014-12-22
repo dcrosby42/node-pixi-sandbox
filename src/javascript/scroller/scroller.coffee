@@ -1,19 +1,19 @@
 Far = require './far'
 Mid = require './mid'
-Walls = require './walls'
+MapData = require './map_data'
 MapBuilder = require './map_builder'
 
 class Scroller
   constructor: (stage) ->
     @far = new Far()
     @mid = new Mid()
-    @front = new Walls()
-    @mapBuilder = new MapBuilder(@front)
+    @mapBuilder = new MapBuilder()
+    @walls = @mapBuilder.createWalls(MapData.Map1)
     @viewportX = 0
 
     stage.addChild @far
     stage.addChild @mid
-    stage.addChild @front
+    stage.addChild @walls
 
   getViewportX: ->
     @viewportX
@@ -22,7 +22,7 @@ class Scroller
     @viewportX = x
     @far.setViewportX(x)
     @mid.setViewportX(x)
-    @front.setViewportX(x)
+    @walls.setViewportX(x)
 
   moveViewportXBy: (x) ->
     @setViewportX @viewportX + x
