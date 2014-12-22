@@ -1,7 +1,7 @@
 PIXI = require 'pixi.js'
 
 class Mid extends PIXI.TilingSprite
-  @DELTA_X = 0.64
+  @DELTA_X = 0.32
   constructor: ->
     texture = PIXI.Texture.fromImage("images/bg-mid.png")
     super texture, 512, 256
