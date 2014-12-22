@@ -16,22 +16,17 @@ jquery ->
   savedWidth = null
   savedHeight = null
   goingBig = ->
-    console.log "going big"
     [savedWidth, savedHeight] = main.getRendererSize()
-    console.log "savedWidth=#{savedWidth} savedHeight=#{savedHeight}"
     main.setRendererSize window.screen.width, window.screen.height
 
   goingSmall = ->
-    console.log "savedWidth=#{savedWidth} savedHeight=#{savedHeight}"
     if savedWidth? and savedHeight?
       main.setRendererSize savedWidth, savedHeight
 
   goBig = ->
     if BigScreen.enabled
-      console.log "requesting..."
       BigScreen.request main.renderer.view, goingBig, goingSmall
 
   $('#fullscreen').on "click", ->
-    console.log "yeah!"
     goBig()
 
