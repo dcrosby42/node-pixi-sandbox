@@ -1,7 +1,7 @@
 PIXI = require 'pixi.js'
 
 class Far extends PIXI.TilingSprite
-  @DELTA_X: 0.128
+  @DELTA_X: 0.064
 
   constructor: ->
     texture = PIXI.Texture.fromImage("images/bg-far.png")
