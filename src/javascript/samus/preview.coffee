@@ -1,5 +1,7 @@
 PIXI = require 'pixi.js'
 
+_ = require 'lodash'
+
 class SamusPreview
   constructor: ->
 
@@ -10,6 +12,8 @@ class SamusPreview
 
   setupStage: (@stage) ->
     @spritesByName = @collectSprites()
+    window.sprites = @spritesByName
+
     @layoutAllSprites(@spritesByName)
     @stage.interactive = true
     @stage.mousedown = (data) ->

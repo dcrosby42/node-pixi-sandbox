@@ -1,5 +1,4 @@
 jquery    = require 'jquery'
-window.$  = jquery # for console debugging and messing around
 
 PixiHarness = require './pixi_harness'
 SamusPreview = require './samus/preview'
@@ -21,3 +20,7 @@ jquery ->
   gameView = harness.view
   $('#fullscreen').on "click", ->
     BigScreen.doTheBigThing gameView
+
+# for console debugging and messing around:
+window.$  = jquery
+window._  = require 'lodash'
