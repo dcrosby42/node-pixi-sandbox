@@ -1,18 +1,23 @@
 jquery    = require 'jquery'
 window.$  = jquery # for console debugging and messing around
 
-Main      = require './scroller/main'
+PixiHarness = require './pixi_harness'
+SamusPreview = require './samus/preview'
 BigScreen = require './vendor/bigscreen_wrapper'
 
 jquery ->
   el = jquery('#game-holder')[0]
 
-  main = new Main
+  samusPreview = new SamusPreview()
+  harness = new PixiHarness
     domElement: el
-    width: el.offsetWidth
-    height: el.offsetHeight
+    delegate: samusPreview
+    width: 512
+    height: 384
+    stage_background: 0x000033
 
-  window.main = main # just for messing around
+  harness.start()
 
+  gameView = harness.view
   $('#fullscreen').on "click", ->
-    BigScreen.doTheBigThing main.renderer.view
+    BigScreen.doTheBigThing gameView
