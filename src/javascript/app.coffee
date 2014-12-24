@@ -21,6 +21,7 @@ jquery ->
   $('#fullscreen').on "click", ->
     BigScreen.doTheBigThing gameView
 
+
 # for console debugging and messing around:
 window.$  = jquery
 window._  = require 'lodash'
