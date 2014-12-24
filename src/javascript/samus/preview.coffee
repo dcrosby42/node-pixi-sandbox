@@ -41,6 +41,7 @@ class SamusPreview
 
     @keyboardController = new KeyboardController
       "right": 'runRight'
+      "left": 'runLeft'
 
   graphicsToPreload: ->
     [ "images/samus.json"
@@ -76,18 +77,32 @@ class SamusPreview
     # @layoutAllSprites(@spritesByName)
     # names = new Cycle(_.keys(@spritesByName))
     
+      # "samus1-04-00" # stand right
     runningSprites = @slice @spritesByName, [
-      # "samus1-04-00"
       "samus1-06-00"
       "samus1-07-00"
       "samus1-08-00"
     ]
-    runningSprites["samus1-06-00"]
+    runningLeftSprites = {}
+    runningLeftSprites["run-left-01"] = PIXI.Sprite.fromFrame("samus1-06-00")
+    runningLeftSprites["run-left-01"].scale.x = -1
+    runningLeftSprites["run-left-01"].anchor.set 0.5,1
+    runningLeftSprites["run-left-02"] = PIXI.Sprite.fromFrame("samus1-07-00")
+    runningLeftSprites["run-left-02"].scale.x = -1
+    runningLeftSprites["run-left-02"].anchor.set 0.5,1
+    runningLeftSprites["run-left-03"] = PIXI.Sprite.fromFrame("samus1-08-00")
+    runningLeftSprites["run-left-03"].scale.x = -1
+    runningLeftSprites["run-left-03"].anchor.set 0.5,1
+    standLeft = PIXI.Sprite.fromFrame("samus1-04-00")
+    standLeft.scale.x = -1
+    standLeft.anchor.set 0.5,1
+
     @runFrames = new Cycle(_.keys(runningSprites))
-    window.runningSprites = runningSprites
+    @runLeftFrames = new Cycle(_.keys(runningLeftSprites))
+    # window.runningSprites = runningSprites
 
     # @flipBook = new FlipBook(@spritesByName, defaultFrame: "samus1-03-00")
-    @flipBook = new FlipBook @spritesByName
+    @flipBook = new FlipBook _.merge(@spritesByName,runningLeftSprites,{"stand-left":standLeft})
     
     # @flipBook.renderable = true
     # @flipBook.scale.set(4,4)
@@ -114,6 +129,7 @@ class SamusPreview
 
     @setupInput()
     @holdTime = null 
+    @holdTimeLeft = null 
 
   addBoxes: ->
     size = 10
@@ -178,9 +194,19 @@ class SamusPreview
 
     if @keyboardController.isActive('runRight')
       @runRight = true
+      @faceRight = true
+      @faceLeft = false
     else
       @runRight = false
       @holdTime = null
+
+    if @keyboardController.isActive('runLeft')
+      @runLeft = true
+      @faceLeft = true
+      @faceRight = false
+    else
+      @runLeft = false
+      @holdTimeLeft = null
       
 
     if @runRight
@@ -189,8 +215,18 @@ class SamusPreview
         @flipBook.showFrame(@runFrames.next())
         @holdTime = 0
       @flipBook.x += 88 * dt
+    else if @runLeft
+      @holdTimeLeft += dt if @holdTimeLeft?
+      if !@holdTimeLeft? or @holdTimeLeft > 0.05 # 20 fps means 1/20 delay between frames
+        @flipBook.showFrame(@runLeftFrames.next())
+        @holdTimeLeft = 0
+      @flipBook.x -= 88 * dt
+
     else
-      @flipBook.showFrame("samus1-04-00")
+      if @faceLeft
+        @flipBook.showFrame("stand-left")
+      else
+        @flipBook.showFrame("samus1-04-00")
 
   ################
 
