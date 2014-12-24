@@ -188,9 +188,7 @@ class SamusPreview
       if !@holdTime? or @holdTime > 0.05 # 20 fps means 1/20 delay between frames
         @flipBook.showFrame(@runFrames.next())
         @holdTime = 0
-      @flipBook.x += 88 * dt
-    else
-      @flipBook.showFrame("samus1-04-00")
+      # console.log @holdTime
 
   ################
 

@@ -6,8 +6,11 @@ window.BigScreen.doTheBigThing = (element) ->
     savedWidth = element.offsetWidth
     savedHeight = element.offsetHeight
     goingBig = ->
-      element.style.width = "#{window.screen.width}px"
-      element.style.height = "#{window.screen.height}px"
+      element.style.width = "1200px"
+      element.style.height = "900px"
+      # element.style.width = "#{window.screen.width}px"
+      # element.style.height = "#{window.screen.height}px"
+      # console.log "window screen #{window.screen.width} x #{window.screen.height}"
     goingSmall = ->
       element.style.width = "#{savedWidth}px"
       element.style.height = "#{savedHeight}px"

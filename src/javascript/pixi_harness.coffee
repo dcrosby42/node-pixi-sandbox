@@ -1,4 +1,5 @@
 PIXI = require 'pixi.js'
+StopWatch = require './stop_watch'
 
 class PixiHarness
   constructor: ({@domElement, @delegate, stage_background, width, height})->
@@ -6,6 +7,8 @@ class PixiHarness
     @renderer = PIXI.autoDetectRenderer(width,height)
     @view = @renderer.view
     @domElement.appendChild @view
+    @stopWatch = new StopWatch()
+
 
   start: ->
     assets = @delegate.graphicsToPreload()
@@ -13,12 +16,15 @@ class PixiHarness
     loader.onComplete = =>
       console.log "Assets loaded."
       @delegate.setupStage @stage
+      @stopWatch.start()
       requestAnimationFrame => @update()
+
     console.log "Loading assets..."
     loader.load()
 
   update: ->
-    @delegate.update()
+    dt = @stopWatch.lapInSeconds()
+    @delegate.update(dt)
     @renderer.render(@stage)
     requestAnimationFrame => @update()
 

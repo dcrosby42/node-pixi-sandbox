@@ -11,8 +11,8 @@ jquery ->
   harness = new PixiHarness
     domElement: el
     delegate: samusPreview
-    width: 512
-    height: 384
+    width: 640
+    height: 480
     stage_background: 0x000033
 
   harness.start()
