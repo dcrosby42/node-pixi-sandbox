@@ -151,18 +151,46 @@ class SamusPreview
     cursor.position.set(0,0)
     cursor
 
-  updateAnimation: (animComp, controlsComp, dt) ->
+  updateCharacter: (charComp, controlsComp) ->
     if controlsComp.left
-      animComp.state = 'run-left'
+      charComp.direction = 'left'
+      charComp.action = 'running'
     else if controlsComp.right
-      animComp.state = 'run-right'
+      charComp.direction = 'right'
+      charComp.action = 'running'
     else
-      animComp.state = 'stand-right'
+      charComp.action = 'standing'
+
+  updateAnimation: (animComp, charComp, dt) ->
+    if charComp.action == 'running'
+      if charComp.direction == 'left'
+        animComp.state = 'run-left'
+      else
+        animComp.state = 'run-right'
+    else if charComp.action == 'standing'
+      if charComp.direction == 'left'
+        animComp.state = 'stand-left'
+      else
+        animComp.state = 'stand-right'
 
     animComp.time += dt
 
   updateControls: (comp, kbUpdate) ->
     comp = _.merge(comp,kbUpdate)
+
+  updateMotion: (motionComp, controlsComp, dt) ->
+    motionComp.x = 0
+    motionComp.y = 0
+
+    speed = (44 / dt) * 0.75
+    if controlsComp.right
+      motionComp.x = speed
+    else if controlsComp.left
+      motionComp.x = -speed
+
+  updatePosition: (posComp, motionComp) ->
+    posComp.x += motionComp.x
+    posComp.y += motionComp.y
 
   syncUI: (ui, posComp, animComp) ->
     ui.animator.display animComp.state, animComp.time
@@ -172,7 +200,10 @@ class SamusPreview
     keyboardUpdate = @keyboardController.update()
 
     @updateControls @samus.components.controls, keyboardUpdate
-    @updateAnimation @samus.components.animation, @samus.components.controls, dt
+    @updateMotion @samus.components.motion, @samus.components.controls, dt
+    @updateCharacter @samus.components.character, @samus.components.controls
+    @updatePosition @samus.components.position, @samus.components.motion
+    @updateAnimation @samus.components.animation, @samus.components.character, dt
     
     @syncUI @samus.ui, @samus.components.position, @samus.components.animation
 
@@ -233,10 +264,23 @@ class SamusPreview
     e.ui.animator = Anim.create(sd, config)
 
     e.components = {}
+
+    e.components.character =
+      type: 'character'
+      action: 'standing' # standing | running | jumping | falling
+      direction: 'right' # right | left
+      aim: 'straight' # up | straight
+      
+    e.components.motion =
+      type: 'action'
+      x: 0
+      y: 0
+
     e.components.position =
       type: 'position'
       x: 50
       y: 208
+
     e.components.controls =
       type: 'controls'
       left: false
