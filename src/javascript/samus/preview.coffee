@@ -62,17 +62,22 @@ class SamusPreview
     $('#reset').on "click", =>
       @reset()
     # Mousetrap.bind 'right', => @buttonRight()
+
     Mousetrap.bind 'r', => @reset()
 
-    Mousetrap.bind 'w', => @cursorUp()
-    Mousetrap.bind 'a', => @cursorLeft()
-    Mousetrap.bind 's', => @cursorDown()
-    Mousetrap.bind 'd', => @cursorRight()
-    Mousetrap.bind 'z', => @stand()
+    # Mousetrap.bind 'w', => @cursorUp()
+    # Mousetrap.bind 'a', => @cursorLeft()
+    # Mousetrap.bind 's', => @cursorDown()
+    # Mousetrap.bind 'd', => @cursorRight()
+    # Mousetrap.bind 'z', => @stand()
 
     @keyboardController = new KeyboardController
-      "right": 'runRight'
-      "left": 'runLeft'
+      "right": 'right'
+      "left": 'left'
+      "up": 'up'
+      "down": 'down'
+      "a": 'jump'
+      "s": 'shoot'
 
   graphicsToPreload: ->
     [
@@ -105,13 +110,13 @@ class SamusPreview
     @overlay.addChild(@cursor)
 
 
-    [@samus,@samusAnim] = @createSamus()
+    # [@samus,@samusAnim] = @createSamus()
+    @samus = @createSamus()
 
-    @samus.position.set 50, 208
+    # @samus.position.set 50, 208
     # @samus.display("stand-right")
-    @spriteLayer.addChild @samus
+    @spriteLayer.addChild @samus.ui.spriteDeck
 
-    @samusAnimComponent = { state: 'stand-right', time: 0 }
 
     @setupInput()
 
@@ -146,26 +151,31 @@ class SamusPreview
     cursor.position.set(0,0)
     cursor
 
-  update: (dt) ->
-    controls = @keyboardController.update()
-    console.log controls if controls
-
-    @samusAnimComponent.time += dt
-
-    if @keyboardController.isActive('runLeft')
-      @samusAnimComponent.state = 'run-left'
-      @face = 'left'
-    else if @keyboardController.isActive('runRight')
-      @samusAnimComponent.state = 'run-right'
-      @face = 'right'
+  updateAnimation: (animComp, controlsComp, dt) ->
+    if controlsComp.left
+      animComp.state = 'run-left'
+    else if controlsComp.right
+      animComp.state = 'run-right'
     else
-      @samusAnimComponent.state = if @face == 'left'
-        'stand-left'
-      else
-        'stand-right'
+      animComp.state = 'stand-right'
 
+    animComp.time += dt
+
+  updateControls: (comp, kbUpdate) ->
+    comp = _.merge(comp,kbUpdate)
+
+  syncUI: (ui, posComp, animComp) ->
+    ui.animator.display animComp.state, animComp.time
+    ui.spriteDeck.position.set posComp.x, posComp.y
+
+  update: (dt) ->
+    keyboardUpdate = @keyboardController.update()
+
+    @updateControls @samus.components.controls, keyboardUpdate
+    @updateAnimation @samus.components.animation, @samus.components.controls, dt
     
-    @samusAnim.display(@samusAnimComponent.state, @samusAnimComponent.time)
+    @syncUI @samus.ui, @samus.components.position, @samus.components.animation
+
 
   cursorTo: (pos) ->
     @cursor.position.set(pos.x,pos.y)
@@ -216,9 +226,32 @@ class SamusPreview
 
   createSamus: ->
     config = @samusData()
-    samus = SpriteDeck.create config
-    anim = Anim.create(samus, config)
-    [samus,anim]
+    e = {}
+    e.ui = {}
+    sd = SpriteDeck.create(config)
+    e.ui.spriteDeck = sd
+    e.ui.animator = Anim.create(sd, config)
+
+    e.components = {}
+    e.components.position =
+      type: 'position'
+      x: 50
+      y: 208
+    e.components.controls =
+      type: 'controls'
+      left: false
+      right: false
+      up: false
+      down: false
+      jump: false
+      shoot: false
+
+    e.components.animation =
+      type: 'animation'
+      state: 'stand-right'
+      time: 0
+
+    e
 
 
 
