@@ -5,8 +5,9 @@ Timeline = require './timeline'
 
 class AnimatedSprite extends SpriteDeck
 
-  constructor: (sprites,@timelines) ->
+  constructor: (sprites,@timelines,@config) ->
     super sprites
+    @spriteSheet = @config.spriteSheet
 
   displayAnimation: (state, time=0) ->
     timeline = @timelines[state]
@@ -32,7 +33,7 @@ class AnimatedSprite extends SpriteDeck
   @create: (config) ->
     spriteDeck = SpriteDeck.createSprites(config)
     timelines = AnimatedSprite.createTimelines(config)
-    new AnimatedSprite(spriteDeck, timelines)
+    new AnimatedSprite(spriteDeck, timelines, config)
 
 module.exports = AnimatedSprite
 

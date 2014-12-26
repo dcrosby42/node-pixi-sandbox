@@ -1,83 +1,65 @@
 PIXI = require 'pixi.js'
-FlipBook = require "../flip_book"
-SpriteDeck = require "../sprite_deck"
 _ = require 'lodash'
 $ = require 'jquery'
-DebugShapes = require '../debug_shapes'
+
 Mousetrap = require '../vendor/mousetrap_wrapper'
 window.wtf = Mousetrap
 
 KeyboardController = require '../keyboard_controller'
 
-Animator = require '../animator'
+AnimatedSprite = require '../animated_sprite'
 
+SamusSprites = require('../entity/samus/sprites')
+window.ss = SamusSprites
 
 class SamusPreview
   constructor: ->
 
-  setupInput: ->
-    $('#d-pad-right').on "click", =>
-      @buttonRight()
-    $('#reset').on "click", =>
-      @reset()
-    # Mousetrap.bind 'right', => @buttonRight()
-
-    Mousetrap.bind 'r', => @reset()
-
-    # Mousetrap.bind 'w', => @cursorUp()
-    # Mousetrap.bind 'a', => @cursorLeft()
-    # Mousetrap.bind 's', => @cursorDown()
-    # Mousetrap.bind 'd', => @cursorRight()
-    # Mousetrap.bind 'z', => @stand()
-
-    @keyboardController = new KeyboardController
-      "right": 'right'
-      "left": 'left'
-      "up": 'up'
-      "down": 'down'
-      "a": 'jump'
-      "s": 'shoot'
-
   graphicsToPreload: ->
     [
-      @samusData().spriteSheet
+      SamusSprites.samus.spriteSheet
       "images/room0.png"
       "images/room0_blank.png"
     ]
 
   setupStage: (@stage, width, height) ->
-    console.log width,height
+    # 
+    # Base container:
+    #
     base = new PIXI.DisplayObjectContainer()
     base.scale.set(2.5,2)
     @stage.addChild base
 
+    #
+    # Map container:
+    #
     @mapLayer = new PIXI.DisplayObjectContainer()
-    # @mapLayer.scale.set(1.25,1)
-    # @mapLayer.scale.set(2.5,2)
     base.addChild @mapLayer
 
     @sampleMapBg = PIXI.Sprite.fromFrame("images/room0_blank.png")
     @mapLayer.addChild @sampleMapBg
     
+    #
+    # Main sprite layer:
+    #
     @spriteLayer = new PIXI.DisplayObjectContainer()
-    # @spriteLayer.scale.set(2.5,2)
     base.addChild @spriteLayer
 
+    #
+    # Overlay layer:
+    #
     @overlay = new PIXI.DisplayObjectContainer()
-    # @overlay.scale.set(2.5,2)
     base.addChild @overlay
 
 
     @cursor = @createCursor()
     @overlay.addChild(@cursor)
 
-
-    # [@samus,@samusAnim] = @createSamus()
     @samus = @createSamus()
 
     # @samus.position.set 50, 208
     # @samus.display("stand-right")
-    @spriteLayer.addChild @samus.ui.spriteDeck
+    @spriteLayer.addChild @samus.ui.sprite
 
 
     @setupInput()
@@ -103,6 +85,29 @@ class SamusPreview
   #     sprite.position.y = cursorY
   #     @stage.addChild sprite
   #     cursorX += sprite.width
+
+  setupInput: ->
+    $('#d-pad-right').on "click", =>
+      @buttonRight()
+    $('#reset').on "click", =>
+      @reset()
+    # Mousetrap.bind 'right', => @buttonRight()
+
+    Mousetrap.bind 'r', => @reset()
+
+    # Mousetrap.bind 'w', => @cursorUp()
+    # Mousetrap.bind 'a', => @cursorLeft()
+    # Mousetrap.bind 's', => @cursorDown()
+    # Mousetrap.bind 'd', => @cursorRight()
+    # Mousetrap.bind 'z', => @stand()
+
+    @keyboardController = new KeyboardController
+      "right": 'right'
+      "left": 'left'
+      "up": 'up'
+      "down": 'down'
+      "a": 'jump'
+      "s": 'shoot'
 
 
   createCursor: ->
@@ -159,8 +164,8 @@ class SamusPreview
     posComp.y += motionComp.y
 
   syncUI: (ui, posComp, animComp) ->
-    ui.animator.display animComp.state, animComp.time
-    ui.spriteDeck.position.set posComp.x, posComp.y
+    ui.sprite.displayAnimation animComp.state, animComp.time
+    ui.sprite.position.set posComp.x, posComp.y
 
   update: (dt) ->
     keyboardUpdate = @keyboardController.update()
@@ -194,41 +199,10 @@ class SamusPreview
   showCursorPosition: ->
     #console.log "CURSOR: #{@cursor.x},#{@cursor.y}"
 
-  samusData: ->
-    spriteSheet: "images/samus.json"
-    states:
-      "stand-right":
-        frame: "samus1-04-00"
-      "run-right":
-        frames: [
-          "samus1-06-00"
-          "samus1-07-00"
-          "samus1-08-00"
-        ]
-        fps: 20
-      "stand-left":
-        frame: "samus1-04-00"
-        modify:
-          scale: { x: -1 }
-      "run-left":
-        frames: [
-          "samus1-06-00"
-          "samus1-07-00"
-          "samus1-08-00"
-        ]
-        fps: 20
-        modify:
-          scale: { x: -1 }
-    modify:
-      anchor: { x: 0.5, y: 1 }
-
   createSamus: ->
-    config = @samusData()
     e = {}
-    e.ui = {}
-    sd = SpriteDeck.create(config)
-    e.ui.spriteDeck = sd
-    e.ui.animator = Animator.create(sd, config)
+    e.ui =
+      sprite: AnimatedSprite.create(SamusSprites.samus)
 
     e.components = {}
 
@@ -263,7 +237,6 @@ class SamusPreview
       time: 0
 
     e
-
 
 
 module.exports = SamusPreview
