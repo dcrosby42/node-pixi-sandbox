@@ -11,16 +11,6 @@ class FlipBook extends PIXI.DisplayObjectContainer
       sprite.visible = false
       @addChild sprite
 
-    ##
-
-    # @dots = {}
-    # cornercolor = 0x00ff00
-    # @dots.ul = @mkdot(1,cornercolor)
-    # @dots.ur = @mkDot(1,cornerColor)
-    # @dots.ll = @mkDot(1,cornerColor)
-    # @dots.lr = @mkDot(1,cornerColor)
-
-    ##
     @defaultFrame ||= _.keys(@sprites)[0]
     @showingFrame = null
     @showFrame(@defaultFrame)

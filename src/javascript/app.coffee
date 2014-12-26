@@ -25,3 +25,11 @@ jquery ->
 # for console debugging and messing around:
 window.$  = jquery
 window._  = require 'lodash'
+
+# [
+#   {offset: 0, frame: "F0"}
+#   {offset: 50, frame: "F1"}
+#   {offset: 100, frame: "F2"}
+#   # how would I know to wait 50 millis before flipping back to 0?
+# ]
+

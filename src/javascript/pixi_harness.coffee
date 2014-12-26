@@ -23,8 +23,8 @@ class PixiHarness
     loader.load()
 
   update: ->
-    dt = @stopWatch.lapInSeconds()
-    @delegate.update(dt)
+    dt = @stopWatch.lapInMillis()
+    @delegate.update dt
     @renderer.render(@stage)
     requestAnimationFrame => @update()
 

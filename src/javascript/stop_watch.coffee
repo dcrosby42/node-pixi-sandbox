@@ -5,17 +5,23 @@ class StopWatch
     @startMillis = @currentTimeMillis()
     @millis = @startMillis
 
-  lapInSeconds: ->
-    newMillis = @currentTimeMillis()
-    lapMillis = newMillis - @millis
-    @millis = newMillis
-    lapMillis / 1000.0
-
   currentTimeMillis: ->
     new Date().getTime()
 
+  lapInMillis: ->
+    newMillis = @currentTimeMillis()
+    lapMillis = newMillis - @millis
+    @millis = newMillis
+    lapMillis
+
+  elapsedMillis: ->
+    @currentTimeMillis() - @startMillis
+
+  lapInSeconds: ->
+    @lapInMillis() / 1000.0
+
   elapsedSeconds: ->
-    (@currentTimeMillis() - @startMillis)/1000.0
+    @elapsedMillis() / 1000.0
 
 
 module.exports = StopWatch

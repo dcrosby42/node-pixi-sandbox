@@ -21,6 +21,14 @@ Aspect ratio stuff:
 
 Samus runs at approx 5.5 blocks/sec
   88 pixels per second in NES land
-  176 in  doubler land
+  176 px in  doubler land
+
+Game Frames,  ms
+0             0   frame0
+3             50  frame1
+6             100 frame2
 
 
+0---->50---->100---->150---->200
+F0    F1     F2      F0      F1
+0---->50---->100---->0------>50
