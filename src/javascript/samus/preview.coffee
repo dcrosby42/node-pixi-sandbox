@@ -9,48 +9,7 @@ window.wtf = Mousetrap
 
 KeyboardController = require '../keyboard_controller'
 
-Timeline = require '../timeline'
-window.Timeline = Timeline
-
-class Cycle
-  constructor: (arr) ->
-    @_items = _.clone(arr)
-    @_i = 0
-    @_length = @_items.length
-  
-  next: ->
-    x = @_items[@_i]
-    @_i += 1
-    @_i = 0 if @_i >= @_length
-    x
-
-
-class Anim
-  constructor: (@spriteDeck, @animations) ->
-
-  display: (state,time=0) ->
-    timeline = @animations[state]
-    if timeline
-      i = timeline.itemAtTime(time)
-      @spriteDeck.display(state,i)
-
-  @create: (spriteDeck, config) ->
-    animations = []
-    _.forOwn config.states, (data,state) ->
-      frames = if data.frames?
-        data.frames
-      else
-        [ data.frame ]
-
-      frameDelayMillis = 1000 / data.fps
-      frameIndices = _.range(0,frames.length)
-      timeline = Timeline.createTimedEvents(frameDelayMillis, frameIndices, true)
-      animations[state] = timeline
-    new Anim(spriteDeck, animations)
-
-
-    
-
+Animator = require '../animator'
 
 
 class SamusPreview
@@ -84,9 +43,6 @@ class SamusPreview
       @samusData().spriteSheet
       "images/room0.png"
     ]
-
-  slice: (col,keys) ->
-    _.pick col, (v,k) -> _.contains(keys,k)
 
   setupStage: (@stage) ->
 
@@ -162,6 +118,7 @@ class SamusPreview
       charComp.action = 'standing'
 
   updateAnimation: (animComp, charComp, dt) ->
+    oldState = animComp.state
     if charComp.action == 'running'
       if charComp.direction == 'left'
         animComp.state = 'run-left'
@@ -173,7 +130,10 @@ class SamusPreview
       else
         animComp.state = 'stand-right'
 
-    animComp.time += dt
+    if animComp.state != oldState
+      animComp.time = 0
+    else
+      animComp.time += dt
 
   updateControls: (comp, kbUpdate) ->
     comp = _.merge(comp,kbUpdate)
@@ -199,14 +159,15 @@ class SamusPreview
   update: (dt) ->
     keyboardUpdate = @keyboardController.update()
 
-    @updateControls @samus.components.controls, keyboardUpdate
-    @updateMotion @samus.components.motion, @samus.components.controls, dt
-    @updateCharacter @samus.components.character, @samus.components.controls
-    @updatePosition @samus.components.position, @samus.components.motion
-    @updateAnimation @samus.components.animation, @samus.components.character, dt
-    
-    @syncUI @samus.ui, @samus.components.position, @samus.components.animation
+    c = @samus.components
 
+    @updateControls  c.controls, keyboardUpdate
+    @updateMotion    c.motion, c.controls, dt
+    @updateCharacter c.character, c.controls
+    @updatePosition  c.position, c.motion
+    @updateAnimation c.animation, c.character, dt
+    
+    @syncUI @samus.ui, c.position, c.animation
 
   cursorTo: (pos) ->
     @cursor.position.set(pos.x,pos.y)
@@ -261,7 +222,7 @@ class SamusPreview
     e.ui = {}
     sd = SpriteDeck.create(config)
     e.ui.spriteDeck = sd
-    e.ui.animator = Anim.create(sd, config)
+    e.ui.animator = Animator.create(sd, config)
 
     e.components = {}
 
