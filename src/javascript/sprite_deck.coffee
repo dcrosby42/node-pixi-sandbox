@@ -31,7 +31,7 @@ class SpriteDeck extends PIXI.DisplayObjectContainer
     if arr
       arr[index]
 
-  @create: (config) ->
+  @createSprites: (config) ->
     modsForAll = config.modify || {}
     sprites = {}
     _.forOwn config.states, (data, state) ->
@@ -42,6 +42,10 @@ class SpriteDeck extends PIXI.DisplayObjectContainer
         sprites[state] = _.map data.frames, (frame) -> SpriteDeck._buildSprite(frame, mods)
       else
         console.log "SpriteDeck.create: data for '#{state}' missing either 'frame' or 'frames'"
+    sprites
+
+  @create: (config) ->
+    sprites = SpriteDeck.createSprites(config)
     new SpriteDeck(sprites)
 
   @_buildSprite: (frame, mods) ->
@@ -54,10 +58,8 @@ class SpriteDeck extends PIXI.DisplayObjectContainer
   @_applyMods: (obj, mods) ->
     _.forOwn mods, (data,key) ->
       if _.isPlainObject(data)
-        console.log "Recursively modifying #{key} of", obj, data
         SpriteDeck._applyMods(obj[key], data)
       else
-        console.log "Modifying #{key} of", obj, data
         obj[key] = data
 
 

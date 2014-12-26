@@ -15,7 +15,7 @@ class PixiHarness
     loader = new PIXI.AssetLoader(assets)
     loader.onComplete = =>
       console.log "Assets loaded."
-      @delegate.setupStage @stage
+      @delegate.setupStage @stage, @renderer.view.offsetWidth, @renderer.view.offsetHeight
       @stopWatch.start()
       requestAnimationFrame => @update()
 

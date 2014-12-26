@@ -42,24 +42,30 @@ class SamusPreview
     [
       @samusData().spriteSheet
       "images/room0.png"
+      "images/room0_blank.png"
     ]
 
-  setupStage: (@stage) ->
+  setupStage: (@stage, width, height) ->
+    console.log width,height
+    base = new PIXI.DisplayObjectContainer()
+    base.scale.set(2.5,2)
+    @stage.addChild base
 
     @mapLayer = new PIXI.DisplayObjectContainer()
-    @mapLayer.scale.set(1.25,1)
-    @stage.addChild @mapLayer
+    # @mapLayer.scale.set(1.25,1)
+    # @mapLayer.scale.set(2.5,2)
+    base.addChild @mapLayer
 
-    @sampleMapBg = PIXI.Sprite.fromFrame("images/room0.png")
+    @sampleMapBg = PIXI.Sprite.fromFrame("images/room0_blank.png")
     @mapLayer.addChild @sampleMapBg
     
     @spriteLayer = new PIXI.DisplayObjectContainer()
-    @spriteLayer.scale.set(2.5,2)
-    @stage.addChild @spriteLayer
+    # @spriteLayer.scale.set(2.5,2)
+    base.addChild @spriteLayer
 
     @overlay = new PIXI.DisplayObjectContainer()
-    @overlay.scale.set(2.5,2)
-    @stage.addChild @overlay
+    # @overlay.scale.set(2.5,2)
+    base.addChild @overlay
 
 
     @cursor = @createCursor()
