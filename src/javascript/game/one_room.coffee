@@ -3,8 +3,8 @@ _ = require 'lodash'
 # $ = require 'jquery'
 
 Mousetrap = require '../vendor/mousetrap_wrapper'
-
 KeyboardController = require '../input/keyboard_controller'
+GamepadController = require('../input/gamepad_controller')
 
 EntityStore    = require '../ecs/entity_store'
 SystemRegistry = require '../ecs/system_registry'
@@ -71,14 +71,30 @@ class OneRoom
     @input =
       controllers:
         player1: {}
+        player2: {}
+        admin: {}
 
-    @p1Controller = new KeyboardController
+    @keyboardController = new KeyboardController
       "right": 'right'
       "left": 'left'
       "up": 'up'
       "down": 'down'
       "a": 'jump'
       "s": 'shoot'
+
+    @adminController = new KeyboardController
+      "g": 'toggle_gamepad'
+
+    @gamepadController = new GamepadController
+      "DPAD_RIGHT": 'right'
+      "DPAD_LEFT": 'left'
+      "DPAD_UP": 'up'
+      "DPAD_DOWN": 'down'
+      "FACE_1": 'jump'
+      "FACE_3": 'shoot'
+
+    @useGamepad = false
+    @p1Controller = @keyboardController
 
   setupSpriteConfigs: ->
     @spriteConfigs = {}
@@ -99,11 +115,24 @@ class OneRoom
     ]
 
   update: (dt) ->
+    @handleAdminControls()
+      
     @input.controllers.player1 = @p1Controller.update()
+    # @input.controllers.player2 = @p2Controller.update()
+
 
     @systemsRunner.run @estore, dt, @input
-    # for system in @systems
-    #   system.run(@estore, dt, @input)
+
+  handleAdminControls: ->
+    ac = @adminController.update()
+    if ac and ac.toggle_gamepad
+      @useGamepad = !@useGamepad
+      if @useGamepad
+        @p1Controller = @gamepadController
+        console.log "Switched to gamepad control"
+      else
+        @p1Controller = @keyboardController
+        console.log "Switched to keyboard control"
     
   createSamus: (estore) ->
     e = estore.newEntity()
