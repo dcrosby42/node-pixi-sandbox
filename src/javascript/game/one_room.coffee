@@ -1,17 +1,15 @@
 PIXI = require 'pixi.js'
 _ = require 'lodash'
-$ = require 'jquery'
+# $ = require 'jquery'
 
 Mousetrap = require '../vendor/mousetrap_wrapper'
-window.wtf = Mousetrap
 
-KeyboardController = require '../keyboard_controller'
-
-SamusSprites = require('./entity/samus/sprites')
+KeyboardController = require '../input/keyboard_controller'
 
 EntityStore    = require '../ecs/entity_store'
 SystemRegistry = require '../ecs/system_registry'
 
+SamusSprites = require('./entity/samus/sprites')
 C = require './entity/components'
 
 Systems = require './systems'

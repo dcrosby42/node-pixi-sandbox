@@ -1,4 +1,4 @@
-MouseTrap =require './vendor/mousetrap_wrapper'
+MouseTrap =require '../vendor/mousetrap_wrapper'
 
 class KeyboardWrapper
   constructor: (@keys) ->

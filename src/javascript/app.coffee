@@ -1,8 +1,8 @@
 jquery    = require 'jquery'
 
-PixiHarness = require './pixi_harness'
-# SamusPreview = require './samus/preview'
+PixiHarness = require './pixi_ext/pixi_harness'
 OneRoom = require './game/one_room'
+# SamusPreview = require './game/samus_preview'
 # SkreePreview = require './samus/skree_preview'
 BigScreen = require './vendor/bigscreen_wrapper'
 

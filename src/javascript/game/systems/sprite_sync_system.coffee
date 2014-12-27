@@ -1,5 +1,5 @@
-ArrayToCacheBinding = require '../../utils/array_to_cache_binding'
-AnimatedSprite = require '../../animated_sprite'
+ArrayToCacheBinding = require '../../pixi_ext/array_to_cache_binding'
+AnimatedSprite = require '../../pixi_ext/animated_sprite'
 
 class SpriteSyncSystem
   constructor: ({@spriteConfigs, @spriteLookupTable, @container}) ->
