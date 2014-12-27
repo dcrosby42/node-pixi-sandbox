@@ -12,7 +12,6 @@ class PixiHarness
 
   start: ->
     assets = @delegate.graphicsToPreload()
-    console.log assets
     loader = new PIXI.AssetLoader(assets)
     loader.onComplete = =>
       console.log "Assets loaded."
@@ -20,7 +19,6 @@ class PixiHarness
       @stopWatch.start()
       requestAnimationFrame => @update()
 
-    console.log "Loading assets..."
     loader.load()
 
   update: ->

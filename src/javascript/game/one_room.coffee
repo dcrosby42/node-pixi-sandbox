@@ -9,8 +9,94 @@ KeyboardController = require '../keyboard_controller'
 
 AnimatedSprite = require '../animated_sprite'
 
-SamusSprites = require('../entity/samus/sprites')
-window.ss = SamusSprites
+SamusSprites = require('./entity/samus/sprites')
+
+
+EntityStore = require '../ecs/entity_store'
+C = require './entity/components'
+
+ArrayToCacheBinding = require '../utils/array_to_cache_binding'
+
+class ControllerSystem
+  run: (estore, dt, input) ->
+    for controller in estore.getComponentsOfType('controller')
+      if input.controllers and ins = input.controllers[controller.inputName]
+        states = controller.states
+        _.forOwn ins, (val,key) ->
+          states[key] = val
+
+class SamusMotionSystem
+  run: (estore, dt, input) ->
+    for samus in estore.getComponentsOfType('samus')
+      controller = estore.getComponent(samus.eid, 'controller')
+      movement = estore.getComponent(samus.eid, 'movement')
+      
+      movement.x = 0
+      movement.y = 0
+
+      speed = (44 / dt) * 0.75
+      if controller.states.right
+        movement.x = speed
+        samus.direction = 'right'
+        samus.action = 'running'
+      else if controller.states.left
+        samus.direction = 'left'
+        samus.action = 'running'
+        movement.x = -speed
+      else
+        samus.action = 'standing'
+
+class SamusAnimationSystem
+  run: (estore, dt, input) ->
+    for samus in estore.getComponentsOfType('samus')
+      visual = estore.getComponent(samus.eid, 'visual')
+      oldState = visual.state
+      if samus.action == 'running'
+        if samus.direction == 'left'
+          visual.state = 'run-left'
+        else
+          visual.state = 'run-right'
+      else if samus.action == 'standing'
+        if samus.direction == 'left'
+          visual.state = 'stand-left'
+        else
+          visual.state = 'stand-right'
+
+      if visual.state != oldState
+        visual.time = 0
+      else
+        visual.time += dt
+
+
+class MovementSystem
+  run: (estore, dt, input) ->
+    for movement in estore.getComponentsOfType('movement')
+      position = estore.getComponent(movement.eid, 'position')
+
+      position.x += movement.x
+      position.y += movement.y
+  
+class SpriteSyncSystem
+  constructor: ({@spriteConfigs, @spriteLookupTable, @container}) ->
+
+  run: (estore, dt, input) ->
+    visuals = estore.getComponentsOfType('visual')
+    ArrayToCacheBinding.update
+      source: visuals
+      cache: @spriteLookupTable
+      identKey: 'eid'
+      addFn: (visual) =>
+        config = @spriteConfigs[visual.spriteName]
+        sprite = AnimatedSprite.create(config)
+        @container.addChild sprite
+        sprite
+      removeFn: (sprite) =>
+        @container.removeChild sprite
+      syncFn: (visual,sprite) =>
+        pos = estore.getComponent(visual.eid, 'position')
+        sprite.displayAnimation visual.state, visual.time
+        sprite.position.set pos.x, pos.y
+
 
 class OneRoom
   constructor: ->
@@ -50,17 +136,27 @@ class OneRoom
     @overlay = new PIXI.DisplayObjectContainer()
     base.addChild @overlay
 
-    @samus = @createSamus()
-    window.samus = @samus
-    @spriteLayer.addChild @samus.ui.sprite
+    @estore = new EntityStore()
+
+    @samusId = @createSamus(@estore)
+
+    @setupSpriteConfigs()
+
+    @setupSystems()
 
     @setupInput()
-
+    
+    window.me = @
+    window.estore = @estore
+    window.samusId = @samusId
     window.stage = @stage
 
   setupInput: ->
-    # Mousetrap.bind 'z', => @stand()
-    @samusController = new KeyboardController
+    @input =
+      controllers:
+        player1: {}
+
+    @p1Controller = new KeyboardController
       "right": 'right'
       "left": 'left'
       "up": 'up'
@@ -68,110 +164,43 @@ class OneRoom
       "a": 'jump'
       "s": 'shoot'
 
-  createCursor: ->
-    cursor = new PIXI.Graphics()
-    cursor.lineStyle(1, 0x9999FF)
-    cursor.drawRect(-5,-5,10,10)
-    cursor.moveTo(0,0).lineTo(-5,0).moveTo(0,0).lineTo(0,-5).moveTo(0,0).lineTo(5,0).moveTo(0,0).lineTo(0,5)
-    cursor.position.set(0,0)
-    cursor
+  setupSpriteConfigs: ->
+    @spriteConfigs = {}
+    _.merge @spriteConfigs, SamusSprites
 
-  updateCharacter: (charComp, controlsComp) ->
-    if controlsComp.left
-      charComp.direction = 'left'
-      charComp.action = 'running'
-    else if controlsComp.right
-      charComp.direction = 'right'
-      charComp.action = 'running'
-    else
-      charComp.action = 'standing'
+    @spriteLookupTable = {}
 
-  updateAnimation: (animComp, charComp, dt) ->
-    oldState = animComp.state
-    if charComp.action == 'running'
-      if charComp.direction == 'left'
-        animComp.state = 'run-left'
-      else
-        animComp.state = 'run-right'
-    else if charComp.action == 'standing'
-      if charComp.direction == 'left'
-        animComp.state = 'stand-left'
-      else
-        animComp.state = 'stand-right'
-
-    if animComp.state != oldState
-      animComp.time = 0
-    else
-      animComp.time += dt
-
-  updateControls: (comp, kbUpdate) ->
-    comp = _.merge(comp,kbUpdate)
-
-  updateMotion: (motionComp, controlsComp, dt) ->
-    motionComp.x = 0
-    motionComp.y = 0
-
-    speed = (44 / dt) * 0.75
-    if controlsComp.right
-      motionComp.x = speed
-    else if controlsComp.left
-      motionComp.x = -speed
-
-  updatePosition: (posComp, motionComp) ->
-    posComp.x += motionComp.x
-    posComp.y += motionComp.y
-
-  syncUI: (ui, posComp, animComp) ->
-    ui.sprite.displayAnimation animComp.state, animComp.time
-    ui.sprite.position.set posComp.x, posComp.y
+  setupSystems: ->
+    @systems = [
+      new ControllerSystem()
+      new SamusMotionSystem()
+      new SamusAnimationSystem()
+      new MovementSystem()
+      new SpriteSyncSystem(
+        spriteConfigs: @spriteConfigs
+        spriteLookupTable: @spriteLookupTable
+        container: @spriteLayer
+      )
+    ]
 
   update: (dt) ->
-    @updateSamus(dt)
+    @input.controllers.player1 = @p1Controller.update()
 
-  updateSamus: (dt) ->
-    c = @samus.components
-    @updateControls  c.controls, @samusController.update()
-    @updateMotion    c.motion, c.controls, dt
-    @updateCharacter c.character, c.controls
-    @updatePosition  c.position, c.motion
-    @updateAnimation c.animation, c.character, dt
+    for system in @systems
+      system.run(@estore, dt, @input)
     
-    @syncUI @samus.ui, c.position, c.animation
+  createSamus: (estore) ->
+    e = estore.newEntity()
 
-  createSamus: ->
-    e = {}
-    e.ui =
-      sprite: AnimatedSprite.create(SamusSprites.samus)
-
-    e.components = {}
-
-    e.components.character =
-      type: 'character'
+    estore.addComponent e, new C.Samus
       action: 'standing' # standing | running | jumping | falling
       direction: 'right' # right | left
       aim: 'straight' # up | straight
-      
-    e.components.motion =
-      type: 'action'
-      x: 0
-      y: 0
-
-    e.components.position =
-      type: 'position'
-      x: 50
-      y: 208
-
-    e.components.controls =
-      type: 'controls'
-      left: false
-      right: false
-      up: false
-      down: false
-      jump: false
-      shoot: false
-
-    e.components.animation =
-      type: 'animation'
+    estore.addComponent e, new C.Position(x: 50, y: 208)
+    estore.addComponent e, new C.Movement()
+    estore.addComponent e, new C.Controller(inputName: 'player1')
+    estore.addComponent e, new C.Visual
+      spriteName: 'samus'
       state: 'stand-right'
       time: 0
 
