@@ -1,35 +1,7 @@
 Gamepad = require('../vendor/gamepad').Gamepad
 
-# class GamepadController
-#   constructor: (config) ->
 #
-#     @gamepad = new Gamepad()
-#
-#     @gamepad.bind Gamepad.Event.CONNECTED, (device) ->
-#       console.log("CONNECTED", device)
-#
-#     @gamepad.bind Gamepad.Event.DISCONNECTED, (device) ->
-#       console.log("DISCONNECTED", device)
-#
-#     @gamepad.bind Gamepad.Event.UNSUPPORTED, (device) ->
-#       console.log("UNSUPPORTED", device)
-#
-#     @gamepad.bind Gamepad.Event.BUTTON_DOWN, (e) ->
-#       console.log("BUTTON_DOWN", e)
-#
-#     @gamepad.bind Gamepad.Event.BUTTON_UP, (e) ->
-#       console.log("BUTTON_UP", e)
-#
-#     @gamepad.bind Gamepad.Event.AXIS_CHANGED, (e) ->
-#       console.log("AXIS_CHANGED", e)
-#
-#     # @gamepad.bind Gamepad.Event.TICK, (gamepads) ->
-#
-#     if @gamepad.init()
-#       console.log("Gamepad init ok")
-#         # Your browser does not support gamepads, get the latest Google Chrome or Firefox
-#     else
-#       console.log("Gamepad init FAILED")
+# TODO: FIX MASSIVE CODE DUPE BTW THIS AND KeyboadController
 #
 
 class GamepadWrapper
