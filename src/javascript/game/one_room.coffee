@@ -7,96 +7,14 @@ window.wtf = Mousetrap
 
 KeyboardController = require '../keyboard_controller'
 
-AnimatedSprite = require '../animated_sprite'
-
 SamusSprites = require('./entity/samus/sprites')
 
+EntityStore    = require '../ecs/entity_store'
+SystemRegistry = require '../ecs/system_registry'
 
-EntityStore = require '../ecs/entity_store'
 C = require './entity/components'
 
-ArrayToCacheBinding = require '../utils/array_to_cache_binding'
-
-class ControllerSystem
-  run: (estore, dt, input) ->
-    for controller in estore.getComponentsOfType('controller')
-      if input.controllers and ins = input.controllers[controller.inputName]
-        states = controller.states
-        _.forOwn ins, (val,key) ->
-          states[key] = val
-
-class SamusMotionSystem
-  run: (estore, dt, input) ->
-    for samus in estore.getComponentsOfType('samus')
-      controller = estore.getComponent(samus.eid, 'controller')
-      movement = estore.getComponent(samus.eid, 'movement')
-      
-      movement.x = 0
-      movement.y = 0
-
-      speed = (44 / dt) * 0.75
-      if controller.states.right
-        movement.x = speed
-        samus.direction = 'right'
-        samus.action = 'running'
-      else if controller.states.left
-        samus.direction = 'left'
-        samus.action = 'running'
-        movement.x = -speed
-      else
-        samus.action = 'standing'
-
-class SamusAnimationSystem
-  run: (estore, dt, input) ->
-    for samus in estore.getComponentsOfType('samus')
-      visual = estore.getComponent(samus.eid, 'visual')
-      oldState = visual.state
-      if samus.action == 'running'
-        if samus.direction == 'left'
-          visual.state = 'run-left'
-        else
-          visual.state = 'run-right'
-      else if samus.action == 'standing'
-        if samus.direction == 'left'
-          visual.state = 'stand-left'
-        else
-          visual.state = 'stand-right'
-
-      if visual.state != oldState
-        visual.time = 0
-      else
-        visual.time += dt
-
-
-class MovementSystem
-  run: (estore, dt, input) ->
-    for movement in estore.getComponentsOfType('movement')
-      position = estore.getComponent(movement.eid, 'position')
-
-      position.x += movement.x
-      position.y += movement.y
-  
-class SpriteSyncSystem
-  constructor: ({@spriteConfigs, @spriteLookupTable, @container}) ->
-
-  run: (estore, dt, input) ->
-    visuals = estore.getComponentsOfType('visual')
-    ArrayToCacheBinding.update
-      source: visuals
-      cache: @spriteLookupTable
-      identKey: 'eid'
-      addFn: (visual) =>
-        config = @spriteConfigs[visual.spriteName]
-        sprite = AnimatedSprite.create(config)
-        @container.addChild sprite
-        sprite
-      removeFn: (sprite) =>
-        @container.removeChild sprite
-      syncFn: (visual,sprite) =>
-        pos = estore.getComponent(visual.eid, 'position')
-        sprite.displayAnimation visual.state, visual.time
-        sprite.position.set pos.x, pos.y
-
+Systems = require './systems'
 
 class OneRoom
   constructor: ->
@@ -171,23 +89,23 @@ class OneRoom
     @spriteLookupTable = {}
 
   setupSystems: ->
-    @systems = [
-      new ControllerSystem()
-      new SamusMotionSystem()
-      new SamusAnimationSystem()
-      new MovementSystem()
-      new SpriteSyncSystem(
+    @systemsRunner = Systems.sequence [
+      'controller'
+      'samus_motion'
+      'samus_animation'
+      'movement'
+      ['sprite_sync',
         spriteConfigs: @spriteConfigs
         spriteLookupTable: @spriteLookupTable
-        container: @spriteLayer
-      )
+        container: @spriteLayer ]
     ]
 
   update: (dt) ->
     @input.controllers.player1 = @p1Controller.update()
 
-    for system in @systems
-      system.run(@estore, dt, @input)
+    @systemsRunner.run @estore, dt, @input
+    # for system in @systems
+    #   system.run(@estore, dt, @input)
     
   createSamus: (estore) ->
     e = estore.newEntity()
