@@ -55,6 +55,8 @@ class OneRoom
 
     @setupInput()
     
+    @timeDilation = 1
+
     window.me = @
     window.estore = @estore
     window.samusId = @samusId
@@ -137,7 +139,7 @@ class OneRoom
     # @input.controllers.player2 = @p2Controller.update()
 
 
-    @systemsRunner.run @estore, dt, @input
+    @systemsRunner.run @estore, dt*@timeDilation, @input
 
   handleAdminControls: ->
     ac = @adminController.update()
@@ -157,6 +159,7 @@ class OneRoom
       action: 'standing' # standing | running | jumping | falling
       direction: 'right' # right | left
       aim: 'straight' # up | straight
+      runSpeed: 88/1000 # 88 px/sec
     estore.addComponent e, new C.Position(x: 50, y: 208)
     estore.addComponent e, new C.Movement()
     estore.addComponent e, new C.Controller(inputName: 'player1')

@@ -7,15 +7,15 @@ class SamusMotionSystem
       movement.x = 0
       movement.y = 0
 
-      speed = (44 / dt) * 0.75
+      dist = samus.runSpeed * dt
       if controller.states.right
-        movement.x = speed
+        movement.x = dist
         samus.direction = 'right'
         samus.action = 'running'
       else if controller.states.left
         samus.direction = 'left'
         samus.action = 'running'
-        movement.x = -speed
+        movement.x = -dist
       else
         samus.action = 'standing'
 

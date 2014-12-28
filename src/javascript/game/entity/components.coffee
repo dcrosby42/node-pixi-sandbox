@@ -24,5 +24,5 @@ C.Controller = class Controller
     @states ||= {}
 
 C.Samus = class Samus
-  constructor: ({@action,@direction,@aim}={}) ->
+  constructor: ({@action,@direction,@aim,@runSpeed}={}) ->
     @ctype = 'samus'
