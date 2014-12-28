@@ -1,22 +1,29 @@
+ObjectUtils = require '../../utils/object_utils'
 
 class SamusAnimationSystem
+  constructor: ->
+    defs = [
+      [['standing','right','straight'], 'stand-right']
+      [['standing','right','up'],       'stand-right-aim-up']
+      [['standing','left','straight'],  'stand-left']
+      [['standing','left','up'],        'stand-left-aim-up']
+      [['running','left','straight'],   'run-left']
+      [['running','left','up'],         'run-left-aim-up']
+      [['running','right','straight'],  'run-right']
+      [['running','right','up'],        'run-right-aim-up']
+    ]
+    @states = {}
+    _.forEach defs, ([path,state]) =>
+      ObjectUtils.setDeep @states, path, state
+
+
   run: (estore, dt, input) ->
     for samus in estore.getComponentsOfType('samus')
       visual = estore.getComponent(samus.eid, 'visual')
       oldState = visual.state
-      if samus.action == 'running'
-        if samus.direction == 'left'
-          visual.state = 'run-left'
-        else
-          visual.state = 'run-right'
-      else if samus.action == 'standing'
-        if samus.direction == 'left'
-          visual.state = 'stand-left'
-        else
-          visual.state = 'stand-right'
 
-      if samus.aim == 'up'
-        visual.state += '-aim-up'
+      keyPath = ObjectUtils.getPropertiesList samus, ['action','direction','aim']
+      visual.state = ObjectUtils.getDeep @states, keyPath
 
       if visual.state != oldState
         visual.time = 0
