@@ -32,10 +32,10 @@ class SpriteDeck extends PIXI.DisplayObjectContainer
       arr[index]
 
   @createSprites: (config) ->
-    modsForAll = config.modify || {}
+    propsForAll = config.props || {}
     sprites = {}
     _.forOwn config.states, (data, state) ->
-      mods = _.merge(modsForAll, data.modify)
+      mods = _.merge(propsForAll, data.props)
       if data.frame?
         sprites[state] = [ SpriteDeck._buildSprite(data.frame, mods) ]
       else if data.frames?
