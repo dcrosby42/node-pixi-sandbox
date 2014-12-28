@@ -3,7 +3,7 @@ class SamusMotionSystem
     for samus in estore.getComponentsOfType('samus')
       controller = estore.getComponent(samus.eid, 'controller')
       movement = estore.getComponent(samus.eid, 'movement')
-      
+
       movement.x = 0
       movement.y = 0
 
@@ -18,5 +18,10 @@ class SamusMotionSystem
         movement.x = -speed
       else
         samus.action = 'standing'
+
+      if controller.states.up
+        samus.aim = 'up'
+      else
+        samus.aim = 'straight'
 
 module.exports = SamusMotionSystem

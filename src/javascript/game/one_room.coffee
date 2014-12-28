@@ -14,6 +14,22 @@ C = require './entity/components'
 
 Systems = require './systems'
 
+# Visual config block
+#  -> load assets
+#  -> create AnimatedSprite (SpriteDeck and timelines)
+#
+# Entity factory: put all the parts together to make an Entity
+# Systems
+
+# TODO: Add Skree 
+# TODO: aim-up
+# TODO: shooting sprites
+# TODO: bullets
+# TODO: Sounds: running, shooting
+# TODO: map 
+# TODO: map+motion collision detection
+# TODO: jumping
+# TODO: Add Skree 
 class OneRoom
   constructor: ->
 
@@ -24,33 +40,10 @@ class OneRoom
     ]
 
   setupStage: (@stage, width, height) ->
-    # 
-    # Base container:
-    #
-    base = new PIXI.DisplayObjectContainer()
-    base.scale.set(2.5,2)
-    @stage.addChild base
-
-    #
-    # Map container:
-    #
-    @mapLayer = new PIXI.DisplayObjectContainer()
-    base.addChild @mapLayer
+    @layers = @setupLayers()
 
     @sampleMapBg = PIXI.Sprite.fromFrame("images/room0_blank.png")
-    @mapLayer.addChild @sampleMapBg
-    
-    #
-    # Main sprite layer:
-    #
-    @spriteLayer = new PIXI.DisplayObjectContainer()
-    base.addChild @spriteLayer
-
-    #
-    # Overlay layer:
-    #
-    @overlay = new PIXI.DisplayObjectContainer()
-    base.addChild @overlay
+    @layers.map.addChild @sampleMapBg
 
     @estore = new EntityStore()
 
@@ -66,6 +59,29 @@ class OneRoom
     window.estore = @estore
     window.samusId = @samusId
     window.stage = @stage
+
+  setupLayers: ->
+    base = new PIXI.DisplayObjectContainer()
+    base.scale.set(2.5,2) # double size, and stretch the actual nintendo 256 px to look like 320
+
+    map = new PIXI.DisplayObjectContainer()
+
+    creatures = new PIXI.DisplayObjectContainer()
+
+    overlay = new PIXI.DisplayObjectContainer()
+
+    @stage.addChild base
+    base.addChild map
+    base.addChild creatures
+    base.addChild overlay
+
+    {
+      base: base
+      map: map
+      creatures: creatures
+      overlay: overlay
+      default: creatures
+    }
 
   setupInput: ->
     @input =
@@ -111,7 +127,7 @@ class OneRoom
       ['sprite_sync',
         spriteConfigs: @spriteConfigs
         spriteLookupTable: @spriteLookupTable
-        container: @spriteLayer ]
+        layers: @layers ]
     ]
 
   update: (dt) ->
@@ -145,6 +161,7 @@ class OneRoom
     estore.addComponent e, new C.Movement()
     estore.addComponent e, new C.Controller(inputName: 'player1')
     estore.addComponent e, new C.Visual
+      layer: 'creatures'
       spriteName: 'samus'
       state: 'stand-right'
       time: 0

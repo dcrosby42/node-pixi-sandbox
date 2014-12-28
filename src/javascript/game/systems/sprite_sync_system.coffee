@@ -2,7 +2,7 @@ ArrayToCacheBinding = require '../../pixi_ext/array_to_cache_binding'
 AnimatedSprite = require '../../pixi_ext/animated_sprite'
 
 class SpriteSyncSystem
-  constructor: ({@spriteConfigs, @spriteLookupTable, @container}) ->
+  constructor: ({@spriteConfigs, @spriteLookupTable, @layers}) ->
 
   run: (estore, dt, input) ->
     visuals = estore.getComponentsOfType('visual')
@@ -13,7 +13,8 @@ class SpriteSyncSystem
       addFn: (visual) =>
         config = @spriteConfigs[visual.spriteName]
         sprite = AnimatedSprite.create(config)
-        @container.addChild sprite
+        container = @layers[sprite.layer] || @layers.default
+        container.addChild sprite
         sprite
       removeFn: (sprite) =>
         @container.removeChild sprite

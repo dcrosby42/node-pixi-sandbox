@@ -15,6 +15,9 @@ class SamusAnimationSystem
         else
           visual.state = 'stand-right'
 
+        if samus.aim == 'up'
+          visual.state += '-aim-up'
+
       if visual.state != oldState
         visual.time = 0
       else

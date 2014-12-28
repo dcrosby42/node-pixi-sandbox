@@ -4,6 +4,8 @@ sprites =
     states:
       "stand-right":
         frame: "samus1-04-00"
+      "stand-right-aim-up":
+        frame: "samus1-aim-up"
       "run-right":
         frames: [
           "samus1-06-00"
@@ -13,6 +15,10 @@ sprites =
         fps: 20
       "stand-left":
         frame: "samus1-04-00"
+        modify:
+          scale: { x: -1 }
+      "stand-left-aim-up":
+        frame: "samus1-aim-up"
         modify:
           scale: { x: -1 }
       "run-left":
