@@ -15,6 +15,11 @@ class EntityStore
   newEntity: ->
     @eidGenerator.nextId()
 
+  createEntity: (components) ->
+    eid = @newEntity()
+    for comp in components
+      @addComponent eid, comp
+
   addComponent: (eid, comp) ->
     comp.eid = eid
     @_compsByType(comp.ctype)[eid] = comp

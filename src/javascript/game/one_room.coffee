@@ -8,18 +8,10 @@ GamepadController = require('../input/gamepad_controller')
 
 EntityStore    = require '../ecs/entity_store'
 SystemRegistry = require '../ecs/system_registry'
-
-SamusSprites = require('./entity/samus/sprites')
-C = require './entity/components'
-
 Systems = require './systems'
 
-# Visual config block
-#  -> load assets
-#  -> create AnimatedSprite (SpriteDeck and timelines)
-#
-# Entity factory: put all the parts together to make an Entity
-# Systems
+Samus = require './entity/samus'
+
 
 # TODO: Add Skree 
 # TODO: aim-up
@@ -34,10 +26,12 @@ class OneRoom
   constructor: ->
 
   graphicsToPreload: ->
-    [
-      SamusSprites.samus.spriteSheet
+    assets = Samus.assets
+
+    assets = assets.concat [
       "images/room0_blank.png"
     ]
+    assets
 
   setupStage: (@stage, width, height) ->
     @layers = @setupLayers()
@@ -116,7 +110,7 @@ class OneRoom
 
   setupSpriteConfigs: ->
     @spriteConfigs = {}
-    _.merge @spriteConfigs, SamusSprites
+    _.merge @spriteConfigs, Samus.sprites
 
     @spriteLookupTable = {}
 
@@ -147,29 +141,11 @@ class OneRoom
       @useGamepad = !@useGamepad
       if @useGamepad
         @p1Controller = @gamepadController
-        console.log "Switched to gamepad control"
       else
         @p1Controller = @keyboardController
-        console.log "Switched to keyboard control"
     
   createSamus: (estore) ->
-    e = estore.newEntity()
-
-    estore.addComponent e, new C.Samus
-      action: 'standing' # standing | running | jumping | falling
-      direction: 'right' # right | left
-      aim: 'straight' # up | straight
-      runSpeed: 88/1000 # 88 px/sec
-    estore.addComponent e, new C.Position(x: 50, y: 208)
-    estore.addComponent e, new C.Movement()
-    estore.addComponent e, new C.Controller(inputName: 'player1')
-    estore.addComponent e, new C.Visual
-      layer: 'creatures'
-      spriteName: 'samus'
-      state: 'stand-right'
-      time: 0
-
-    e
+    estore.createEntity Samus.factory.createComponents('samus')
 
 module.exports = OneRoom
 
