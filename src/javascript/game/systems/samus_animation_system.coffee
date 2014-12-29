@@ -11,6 +11,16 @@ class SamusAnimationSystem
       [['running','left','up'],         'run-left-aim-up']
       [['running','right','straight'],  'run-right']
       [['running','right','up'],        'run-right-aim-up']
+
+      [['jumping','right','up'],        'jump-right']
+      [['jumping','right','straight'],  'jump-right']
+      [['jumping','left','up'],         'jump-left']
+      [['jumping','left','straight'],   'jump-left']
+
+      [['falling','right','up'],        'jump-right']
+      [['falling','right','straight'],  'jump-right']
+      [['falling','left','up'],         'jump-left']
+      [['falling','left','straight'],   'jump-left']
     ]
     @states = {}
     _.forEach defs, ([path,state]) =>

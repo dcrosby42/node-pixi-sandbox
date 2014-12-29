@@ -72,9 +72,18 @@
 	"sourceSize": {"w":26,"h":38},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"samus1-shoot-up":
+"samus1-jump-right":
 {
 	"frame": {"x":2,"y":322,"w":26,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
+	"sourceSize": {"w":26,"h":38},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"samus1-shoot-up":
+{
+	"frame": {"x":2,"y":362,"w":26,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
@@ -86,8 +95,8 @@
 	"version": "1.0",
 	"image": "samus.png",
 	"format": "RGBA8888",
-	"size": {"w":30,"h":362},
+	"size": {"w":30,"h":402},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:6581336c6da4aa03e7184cb831a573cf:8b9d68622766301166367166644bb622:ee3397b934a0f7ddedb37d84ef594e2f$"
+	"smartupdate": "$TexturePacker:SmartUpdate:a02b712d9c57d6edb500651c0ee3448f:72661f487f1fcd9efb29429e96fae5e0:ee3397b934a0f7ddedb37d84ef594e2f$"
 }
 }

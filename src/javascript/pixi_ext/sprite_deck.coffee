@@ -1,6 +1,9 @@
 PIXI = require 'pixi.js'
 _    = require 'lodash'
 
+debug = (a...) ->
+  console.log "SpriteDeck DEBUG: ", a...
+
 class SpriteDeck extends PIXI.DisplayObjectContainer
 
   constructor: (@sprites={}) ->
@@ -35,7 +38,10 @@ class SpriteDeck extends PIXI.DisplayObjectContainer
     propsForAll = config.props || {}
     sprites = {}
     _.forOwn config.states, (data, state) ->
-      mods = _.merge(propsForAll, data.props)
+      mods = _.clone(propsForAll)
+      _.merge(mods, data.props)
+      if state == 'stand-right' or state == 'jump-right'
+        debug propsForAll, data.props, mods
       if data.frame?
         sprites[state] = [ SpriteDeck._buildSprite(data.frame, mods) ]
       else if data.frames?

@@ -46,6 +46,15 @@ sprites =
         fps: 20
         props:
           scale: { x: -1 }
+
+      "jump-right":
+        frame: "samus1-jump-right"
+
+      "jump-left":
+        frame: "samus1-jump-right"
+        props:
+          scale: { x: -1 }
+
     props:
       anchor: { x: 0.5, y: 1 }
 

@@ -8,7 +8,8 @@ samusComps = (args) ->
       direction: 'right' # right | left
       aim: 'straight' # up | straight
       runSpeed: 88/1000 # 88 px/sec
-      jumpSpeed: 70/1000
+      jumpSpeed: 200/1000
+      floatSpeed: 60/1000
     new Common.Position(x: 50, y: 208)
     new Common.Movement()
     new Common.Controller(inputName: 'player1')

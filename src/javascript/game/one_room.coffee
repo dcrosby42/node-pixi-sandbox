@@ -132,7 +132,6 @@ class OneRoom
     @input.controllers.player1 = @p1Controller.update()
     # @input.controllers.player2 = @p2Controller.update()
 
-
     @systemsRunner.run @estore, dt*@timeDilation, @input
 
   handleAdminControls: ->
