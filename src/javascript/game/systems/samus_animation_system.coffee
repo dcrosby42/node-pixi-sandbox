@@ -7,6 +7,7 @@ class SamusAnimationSystem
       [['standing','right','up'],       'stand-right-aim-up']
       [['standing','left','straight'],  'stand-left']
       [['standing','left','up'],        'stand-left-aim-up']
+
       [['running','left','straight'],   'run-left']
       [['running','left','up'],         'run-left-aim-up']
       [['running','right','straight'],  'run-right']
