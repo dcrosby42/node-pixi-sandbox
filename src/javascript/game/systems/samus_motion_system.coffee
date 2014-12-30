@@ -19,15 +19,18 @@ class SamusMotionSystem
       else
         samus.aim = 'straight'
 
+      if ctrl.left
+        samus.direction = 'left'
+      else if ctrl.right
+        samus.direction = 'right'
+
       switch samus.action
         when 'standing'
           movement.y = 0
           if ctrl.right
-            samus.direction = 'right'
             samus.action = 'running'
             movement.x = runDist
           else if ctrl.left
-            samus.direction = 'left'
             samus.action = 'running'
             movement.x = -runDist
           
@@ -38,17 +41,13 @@ class SamusMotionSystem
         when 'running'
           movement.y = 0
           if ctrl.right
-            samus.direction = 'right'
             movement.x = runDist
           else if ctrl.left
-            samus.direction = 'left'
             movement.x = -runDist
 
           if ctrl.jump
             samus.action = 'jumping'
             movement.y = -jumpDist
-          # if ctrl.jump
-          #   samus.action = 'jumping'
           
           if movement.x == 0
             samus.action = 'standing'
@@ -57,15 +56,13 @@ class SamusMotionSystem
           movement.y = jumpDist
           ctrl.jump = false
 
-          if position.y >= 208
-            position.y = 208
+          if position.y >= 206
+            position.y = 206
             samus.action = 'standing'
 
           if ctrl.left
-            samus.direction = 'left'
             movement.x = -floatDist
           else if ctrl.right
-            samus.direction = 'right'
             movement.x = floatDist
 
         when 'jumping'
@@ -76,10 +73,8 @@ class SamusMotionSystem
             samus.action = 'falling'
 
           if ctrl.left
-            samus.direction = 'left'
             movement.x = -floatDist
           else if ctrl.right
-            samus.direction = 'right'
             movement.x = floatDist
 
             
